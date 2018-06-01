@@ -9,7 +9,7 @@ const {
   MISSING_ARGUMENTS,
   INVALID_SUBMITTINGDATE,
   INVALID_TURNAROUNDTIME,
-  SUBMITTING_MUST_BE_IN_WORKING_OURS,
+  SUBMITTING_MUST_BE_IN_WORKING_HOURS,
 } = require('./messages/error/index.js');
 
 function calculateDueDate(submitDate, turnaroundTime) {
@@ -45,7 +45,7 @@ function checkArguments(submitDate, turnaroundTime) {
 
 function checkSubmitDateInWorkingHours(submitDate) {
   if (!inWorkingHours(submitDate) || isWeekend(submitDate)) {
-    throw new Error(SUBMITTING_MUST_BE_IN_WORKING_OURS);
+    throw new Error(SUBMITTING_MUST_BE_IN_WORKING_HOURS);
   }
 }
 

@@ -3,7 +3,7 @@ const {
   MISSING_ARGUMENTS,
   INVALID_SUBMITTINGDATE,
   INVALID_TURNAROUNDTIME,
-  SUBMITTING_MUST_BE_IN_WORKING_OURS,
+  SUBMITTING_MUST_BE_IN_WORKING_HOURS,
 } = require('../messages/error/index.js');
 
 
@@ -26,19 +26,19 @@ describe('calculate due date', () => {
       test('submitting date is before working ours', () => {
         submittingDate = new Date(2018, 5, 1, 7, 0, 0, 0);
         expect(() => calculateDueDate(submittingDate, 1))
-          .toThrow(SUBMITTING_MUST_BE_IN_WORKING_OURS);
+          .toThrow(SUBMITTING_MUST_BE_IN_WORKING_HOURS);
       });
 
       test('submitting date is after working ours', () => {
         submittingDate = new Date(2018, 5, 1, 17, 0, 0, 1);
         expect(() => calculateDueDate(submittingDate, 1))
-          .toThrow(SUBMITTING_MUST_BE_IN_WORKING_OURS);
+          .toThrow(SUBMITTING_MUST_BE_IN_WORKING_HOURS);
       });
 
       test('submitting date is in weekends', () => {
         submittingDate = new Date(2018, 5, 2, 9, 0, 0, 0);
         expect(() => calculateDueDate(submittingDate, 1))
-          .toThrow(SUBMITTING_MUST_BE_IN_WORKING_OURS);
+          .toThrow(SUBMITTING_MUST_BE_IN_WORKING_HOURS);
       });
     });
 
