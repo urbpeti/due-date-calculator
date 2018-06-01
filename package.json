@@ -4,7 +4,8 @@
   "description": "calculate the due date for a given bug report",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "./node_modules/eslint/bin/eslint.js ./"
   },
   "repository": {
     "type": "git",
