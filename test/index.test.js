@@ -11,7 +11,7 @@ describe('calculate due date', () => {
   let submittingDate;
 
   beforeEach(() => {
-    submittingDate = new Date(2018, 5, 1, 9, 0, 0, 0);
+    submittingDate = new Date(2018, 4, 31, 9, 0, 0, 0);
   });
 
   describe('with invalid arguments', () => {
@@ -61,15 +61,44 @@ describe('calculate due date', () => {
 
   test('due date ends in the same day', () => {
     const dueDate = calculateDueDate(submittingDate, 3).getTime();
-    const expectedDate = new Date(2018, 5, 1, 12, 0, 0).getTime();
+    const expectedDate = new Date(2018, 4, 31, 12, 0, 0, 0).getTime();
 
     expect(dueDate).toBe(expectedDate);
   });
 
-  xtest('due date ends in the next day', () => {
-    submittingDate = new Date(2018, 4, 31, 9, 0, 0, 0);
+  test('due date ends in the next day', () => {
+    const dueDate = calculateDueDate(submittingDate, 9).getTime();
+    const expectedDate = new Date(2018, 5, 1, 10, 0, 0, 0).getTime();
+
+    expect(dueDate).toBe(expectedDate);
+  });
+
+  test('due date ends in the next day morning', () => {
     const dueDate = calculateDueDate(submittingDate, 8).getTime();
-    const expectedDate = new Date(2018, 5, 1, 9, 0, 0).getTime();
+    const expectedDate = new Date(2018, 5, 1, 9, 0, 0, 0).getTime();
+
+    expect(dueDate).toBe(expectedDate);
+  });
+
+  test('due date starts in the middle of the day', () => {
+    submittingDate = new Date(2018, 4, 31, 14, 12, 0, 0);
+    const dueDate = calculateDueDate(submittingDate, 8).getTime();
+    const expectedDate = new Date(2018, 5, 1, 14, 12, 0, 0).getTime();
+
+    expect(dueDate).toBe(expectedDate);
+  });
+
+  test('due date trougth the weekends', () => {
+    const dueDate = calculateDueDate(submittingDate, 16).getTime();
+    const expectedDate = new Date(2018, 5, 4, 9, 0, 0, 0).getTime();
+
+    expect(dueDate).toBe(expectedDate);
+  });
+
+  test('with big turnaround time', () => {
+    submittingDate = new Date(2018, 5, 4, 9, 12, 13, 144);
+    const dueDate = calculateDueDate(submittingDate, 4160).getTime();
+    const expectedDate = new Date(2020, 5, 1, 9, 12, 13, 144).getTime();
 
     expect(dueDate).toBe(expectedDate);
   });

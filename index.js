@@ -1,5 +1,8 @@
 const {
-  MILLISECOUNDS_IN_ONE_HOUR,
+  MILLISECONDS_IN_ONE_HOUR,
+  MILLISECONDS_IN_ONE_DAY,
+  WORK_STARTING_HOUR,
+  WORK_ENDING_HOUR,
 } = require('./const/constants.js');
 
 const {
@@ -13,7 +16,19 @@ function calculateDueDate(submitDate, turnaroundTime) {
   checkArguments(submitDate, turnaroundTime);
   checkSubmitDateInWorkingHours(submitDate);
 
-  return addHoursToDate(submitDate, turnaroundTime);
+  let remainingTime = hoursToMilliseconds(turnaroundTime);
+  let dueDate = new Date(submitDate);
+  while (remainingTime > 0) {
+    const workingMillisecondsLeft = workingMilliseconds(dueDate);
+    if (remainingTime - workingMillisecondsLeft < 0) {
+      return addMillisecondsToDate(dueDate, remainingTime);
+    }
+
+    remainingTime -= workingMillisecondsLeft;
+    dueDate = nextWorkdayMorning(dueDate);
+  }
+
+  return dueDate;
 }
 
 function checkArguments(submitDate, turnaroundTime) {
@@ -40,18 +55,34 @@ function isWeekend(date) {
 
 function inWorkingHours(date) {
   const dateTime = date.getTime();
-  const workStart = new Date(date).setHours(9, 0, 0, 0);
-  const workEnd = new Date(date).setHours(17, 0, 0, 0);
+  const workStart = new Date(date).setHours(WORK_STARTING_HOUR, 0, 0, 0);
+  const workEnd = new Date(date).setHours(WORK_ENDING_HOUR, 0, 0, 0);
 
   return workStart <= dateTime && dateTime < workEnd;
 }
 
-function addHoursToDate(date, hours) {
-  return new Date(date.getTime() + hoursToMilliseconds(hours));
+function workingMilliseconds(date) {
+  return new Date(date).setHours(WORK_ENDING_HOUR, 0, 0, 0) - date.getTime();
+}
+
+function addMillisecondsToDate(date, milliseconds) {
+  return new Date(date.getTime() + milliseconds);
 }
 
 function hoursToMilliseconds(hour) {
-  return hour * MILLISECOUNDS_IN_ONE_HOUR;
+  return hour * MILLISECONDS_IN_ONE_HOUR;
+}
+
+function nextWorkdayMorning(date) {
+  const newDate = nextDay(date);
+  if (isWeekend(newDate)) {
+    return nextWorkdayMorning(newDate);
+  }
+  return new Date(newDate.setHours(WORK_STARTING_HOUR, 0, 0, 0));
+}
+
+function nextDay(date) {
+  return new Date(date.getTime() + MILLISECONDS_IN_ONE_DAY);
 }
 
 module.exports = calculateDueDate;
